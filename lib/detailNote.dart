@@ -3,56 +3,58 @@ import 'package:hive/hive.dart';
 import 'storage.dart';
 
 class NoteDetailPage extends StatefulWidget {
-  // inisialisasi var untuk menampilan dan edit catatan
-  final Note? note;
-  final int? noteIndex;
+  // inisialisasi 2 parameter untuk menampilan dan edit catatan
+  final Note? note; //note yang diedit
+  final int? noteKey; // kunci
 
-  NoteDetailPage({this.note, this.noteIndex});
+  NoteDetailPage({this.note, this.noteKey});
 
   @override
   _NoteDetailPageState createState() => _NoteDetailPageState();
 }
 
 class _NoteDetailPageState extends State<NoteDetailPage> {
-  // untuk kontrol textField
-  final _titleController = TextEditingController();
-  final _contentController = TextEditingController();
+  // untuk kontrol inputan textField
+  final _titleController = TextEditingController(); // ini judul
+  final _contentController = TextEditingController(); // ini isi
+
   // menyimpan catatan di box hive
   final Box<Note> _notesBox = Hive.box<Note>('notes');
 
   @override
-  // inisialisasi catatan
   void initState() {
     super.initState();
+    // jika note tidak null, maka nampilin judul dan isinya
     if (widget.note != null) {
       _titleController.text = widget.note!.title;
       _contentController.text = widget.note!.content;
     }
   }
 
-  // menyimpan catatan
   void _saveNote() {
+    // newNote ini menyimpan judul, isi, kpn note dibuat, dan kpn trakhir diedit
     final newNote = Note(
       title: _titleController.text,
       content: _contentController.text,
-      // berdasarkan waktu saat ini
       createdDate: widget.note?.createdDate ?? DateTime.now(),
       lastEditedDate: DateTime.now(),
     );
 
-    if (widget.noteIndex == null) {
+    // jika null berarti kan kosong, jd pake .add untuk masukin ke notebox hive
+    if (widget.noteKey == null) {
       _notesBox.add(newNote);
     } else {
-      _notesBox.putAt(widget.noteIndex!, newNote);
+      // klo tdk null, pakai .put utk memperbarui catatan berdasarkan key kedalam notebox hive
+      _notesBox.put(widget.noteKey, newNote);
     }
-
     Navigator.pop(context);
   }
 
-  // menghapus catatan sesuai index
+
   void _deleteNote() {
-    if (widget.noteIndex != null) {
-      _notesBox.deleteAt(widget.noteIndex!);
+    // kl notekey tdk null berarti ada isinya kan, nah di .delete dari notesbox sesuai notekey itu
+    if (widget.noteKey != null) {
+      _notesBox.delete(widget.noteKey);
     }
     Navigator.pop(context);
   }
@@ -60,14 +62,15 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // apabila note nya kosong, maka tambah catatan, kl ada isi maka edit catatan
       appBar: AppBar(
-        // apabila note nya kosong, maka tambah catatan, kl ada isi maka edit catatan
         title: Text(widget.note == null ? 'Tambah Catatan' : 'Edit Catatan'),
         actions: [
-          // jika tidak null, maka akan ada button delete
+          // kalo note nya tidak kosong berarti bisa dihapus, maka dikasi icon delete
           if (widget.note != null)
             IconButton(
               icon: Icon(Icons.delete),
+              // ketika icon di klik akan manggil function deleteNote
               onPressed: _deleteNote,
             ),
         ],
@@ -76,18 +79,18 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // textfield untuk judul 
+            // ini textfield untuk judul
             TextField(
-              controller: _titleController,
+              controller: _titleController, //kontroler nya ya title
               decoration: InputDecoration(
                 labelText: 'Judul',
                 border: OutlineInputBorder(),
               ),
             ),
             SizedBox(height: 20),
-            // textfield untuk isi 
+            // ini textfield untuk isi
             TextField(
-              controller: _contentController,
+              controller: _contentController, //ini konten krn isi
               decoration: InputDecoration(
                 labelText: 'Isi',
                 border: OutlineInputBorder(),
@@ -95,10 +98,10 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
               maxLines: null,
             ),
             SizedBox(height: 20),
-            // button untuk save note
+            // ini button
             ElevatedButton(
-              // jika di klik akan memanggil function save note
-              onPressed: _saveNote,
+              // kl button di pencet akan panggil function savenote
+              onPressed: _saveNote, 
               child: Text('Simpan'),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),

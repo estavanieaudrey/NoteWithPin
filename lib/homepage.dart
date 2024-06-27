@@ -18,17 +18,19 @@ class HomePage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        // return nya dibuat alert
         return AlertDialog(
           title: Text('Ubah PIN'),
           content: Text('Apakah Anda ingin mengubah PIN?'),
           actions: [
+            // kl ga brarti kembali ke page homepage.dart
             TextButton(
               child: Text('Tidak'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            // kalo iya, pake navigator ke class changepin
+            // kl iya brarti manggil function changepin yang direct ke pinpage 
             TextButton(
               child: Text('Ya'),
               onPressed: () {
@@ -44,20 +46,27 @@ class HomePage extends StatelessWidget {
 
   // mengarahkan ke halaman pin page untuk ubah pin
   void _changePin(BuildContext context) {
-    // didelete dulu dari storage
     PinStorage.deletePin().then((_) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PinPage()));
     });
   }
 
-  // mengarahkan ke halaman pinpage
+//   void _changePin(BuildContext context) {
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(builder: (_) => PinPage(isChangingPin: true)),
+//   );
+// }
+
+
+  // mengarahkan ke halaman pinpage krn kalau logout berarti hrs isi pin lagi
   void _logout(BuildContext context) {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PinPage()));
   }
 
   // set format waktu hingga detik
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);  
+    return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
   }
 
   @override
@@ -84,12 +93,12 @@ class HomePage extends StatelessWidget {
             itemBuilder: (BuildContext context) {
               return [
                 PopupMenuItem<String>(
-                  // value ini ngikuti atas
+                  // value ini hrs sama kayak yg ada di loop
                   value: 'logout',
                   child: Text('Logout'),
                 ),
                 PopupMenuItem<String>(
-                  // ini ngikut atas jg
+                  // ini juga
                   value: 'change_pin',
                   child: Text('Ganti PIN'),
                 ),
@@ -105,25 +114,33 @@ class HomePage extends StatelessWidget {
           if (box.values.isEmpty) {
             return Center(child: Text('Tidak ada catatan.'));
           }
+
+          // Mengurutkan catatan berdasarkan waktu terakhir diedit
+          final notes = box.keys.cast<int>().map((key) => MapEntry(key, box.get(key)!)).toList()
+            ..sort((a, b) => b.value.lastEditedDate.compareTo(a.value.lastEditedDate));
+
           // kl trnyt didalam hive ada catetan :
-          return ListView.builder(
-            itemCount: box.length,
+          return ListView.builder( 
+            // var notes yang isinya catatan yg sdh di sort dimasukkan ke itemCount untuk length nya
+            itemCount: notes.length,
+            // manggil konteks dan index item yang ada
             itemBuilder: (context, index) {
-              // di print berdasarkan index
-              final note = box.getAt(index);
-              // return berupa card
+              // var note untuk menyimpan list notes pada index
+              final note = notes[index].value;
+              // var key untuk mengidentifikasi ini note yang mana
+              final key = notes[index].key;
               return Card(
                 elevation: 4,
                 margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
-                  // card menampilkan title dan waktu edit berdasarkan data sesuai index
-                  title: Text(note!.title),
-                  //format waktu e dipanggil
-                  subtitle: Text('Terakhir diedit: ${_formatDateTime(note.lastEditedDate)}'), 
-                  // apabila di klik, akan direct ke page noteDetailPage
+                  // menampilkan judul dari catatan 
+                  title: Text(note.title),
+                  // menampilkan format waktu yang udah di set berdasarkan datetime saat ini
+                  subtitle: Text('Terakhir diedit: ${_formatDateTime(note.lastEditedDate)}'),
                   onTap: () {
+                    // ketika card di klik, akan direct ke detailNote sesuai dengan index yang ada
                     Navigator.push(context, MaterialPageRoute(
-                      builder: (_) => NoteDetailPage(note: note, noteIndex: index),
+                      builder: (_) => NoteDetailPage(note: note, noteKey: key),
                     ));
                   },
                 ),
@@ -132,10 +149,8 @@ class HomePage extends StatelessWidget {
           );
         },
       ),
-      // button ini untuk menambah note baru 
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        // apabila di klik akan direct ke add note
         onPressed: () => _addNote(context),
         backgroundColor: Colors.blueAccent,
       ),
