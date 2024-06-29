@@ -11,7 +11,8 @@ class HomePage extends StatelessWidget {
 
   //navigasi untuk menuju ke tambah catatan baru
   void _addNote(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => NoteDetailPage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (_) => NoteDetailPage()));
   }
 
   // ada card yang berguna untuk menanyakan apakah mau ganti pin / tidak
@@ -21,6 +22,7 @@ class HomePage extends StatelessWidget {
       builder: (BuildContext context) {
         // return nya dibuat alert
         return AlertDialog(
+          backgroundColor: Colors.red[],
           title: Text('Change PIN'),
           content: Text('Do you want to change your PIN?'),
           actions: [
@@ -31,7 +33,7 @@ class HomePage extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
-            // kl iya brarti manggil function changepin yang direct ke pinpage 
+            // kl iya brarti manggil function changepin yang direct ke pinpage
             TextButton(
               child: Text('Yes'),
               onPressed: () {
@@ -55,7 +57,8 @@ class HomePage extends StatelessWidget {
 
   // mengarahkan ke halaman pinpage krn kalau logout berarti hrs isi pin lagi
   void _logout(BuildContext context) {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PinPage()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => PinPage()));
   }
 
   // set format waktu hingga detik
@@ -68,7 +71,10 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       // menu utama
       appBar: AppBar(
-        title: Text('Notes'),
+        title: Text(
+          'Notes',
+          style: TextStyle(fontWeight: FontWeight.bold), // Bold the title
+        ),
         actions: [
           // ada menu pilihan mau logout atau ganti pin
           PopupMenuButton<String>(
@@ -77,7 +83,7 @@ class HomePage extends StatelessWidget {
               if (value == 'logout') {
                 // akan memanggil function _logout
                 _logout(context);
-              // kl semisal pilih change pin
+                // kl semisal pilih change pin
               } else if (value == 'change_pin') {
                 // akan memanggil function yang dapat mengubah pin
                 _showChangePinDialog(context);
@@ -88,12 +94,24 @@ class HomePage extends StatelessWidget {
                 PopupMenuItem<String>(
                   // value ini hrs sama kayak yg ada di loop
                   value: 'logout',
-                  child: Text('Logout'),
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout, color: Colors.red),
+                      SizedBox(width: 10),
+                      Text('Logout', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
                 ),
                 PopupMenuItem<String>(
                   // ini juga
                   value: 'change_pin',
-                  child: Text('Change PIN'),
+                  child: Row(
+                    children: [
+                      Icon(Icons.lock, color: Colors.blue),
+                      SizedBox(width: 10),
+                      Text('Change PIN', style: TextStyle(color: Colors.blue)),
+                    ],
+                  ),
                 ),
               ];
             },
@@ -109,8 +127,12 @@ class HomePage extends StatelessWidget {
           }
 
           // Mengurutkan catatan berdasarkan waktu terakhir diedit
-          final notes = box.keys.cast<int>().map((key) => MapEntry(key, box.get(key)!)).toList()
-            ..sort((a, b) => b.value.lastEditedDate.compareTo(a.value.lastEditedDate));
+          final notes = box.keys
+              .cast<int>()
+              .map((key) => MapEntry(key, box.get(key)!))
+              .toList()
+            ..sort((a, b) =>
+                b.value.lastEditedDate.compareTo(a.value.lastEditedDate));
 
           // kl trnyt didalam hive ada catetan :
           return ListView.builder(
@@ -123,24 +145,33 @@ class HomePage extends StatelessWidget {
               // var key untuk mengidentifikasi ini note yang mana
               final key = notes[index].key;
               return Card(
+                color: Color.fromARGB(255, 176, 205, 255),
                 elevation: 4,
                 margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   // menampilkan judul dari catatan
-                  title: Text(note.title),
+                  title: Text(
+                    note.title,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold), // Bold the title
+                  ),
                   // menampilkan format waktu yang udah di set berdasarkan datetime saat ini
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Created: ${_formatDateTime(note.createdDate)}'),
-                      Text('Last Edited: ${_formatDateTime(note.lastEditedDate)}'),
+                      Text(
+                          'Last Edited: ${_formatDateTime(note.lastEditedDate)}'),
                     ],
                   ),
                   onTap: () {
                     // ketika card di klik, akan direct ke detailNote sesuai dengan index yang ada
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (_) => NoteDetailPage(note: note, noteKey: key),
-                    ));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              NoteDetailPage(note: note, noteKey: key),
+                        ));
                   },
                 ),
               );
@@ -158,4 +189,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
