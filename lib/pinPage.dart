@@ -222,7 +222,7 @@ class _PinPageState extends State<PinPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         _errorMessage,
-                        style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
+                        style: TextStyle(color: Color.fromARGB(255, 255, 7, 7)),
                       ),
                     ),
                 ],

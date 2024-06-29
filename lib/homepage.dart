@@ -266,7 +266,13 @@ class HomePage extends StatelessWidget {
                 margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   title: Text(note.title),
-                  subtitle: Text('Terakhir diedit: ${_formatDateTime(note.lastEditedDate)}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Dibuat: ${_formatDateTime(note.createdDate)}'),
+                      Text('Terakhir diedit: ${_formatDateTime(note.lastEditedDate)}'),
+                    ],
+                  ),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (_) => NoteDetailPage(note: note, noteKey: key),

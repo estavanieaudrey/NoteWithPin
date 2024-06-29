@@ -9,7 +9,7 @@ void main() async {
   Hive.registerAdapter(NoteAdapter());
   await Hive.openBox<Note>('notes');
 
-  await PinStorage.deletePin();
+  // await PinStorage.deletePin();
   runApp(MyApp());
 }
 

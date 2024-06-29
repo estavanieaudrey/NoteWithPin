@@ -142,7 +142,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
             ElevatedButton(
               // kl button di pencet akan panggil function savenote
               onPressed: _saveNote, 
-              child: Text('Simpan'),
+              child: Text('Save'),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 textStyle: TextStyle(fontSize: 18),
