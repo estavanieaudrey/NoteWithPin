@@ -25,7 +25,6 @@ class Note {
   });
 }
 
-
 //untuk menyimpan dan mengambil pin
 class PinStorage {
   static const _storage = FlutterSecureStorage();

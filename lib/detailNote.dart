@@ -71,7 +71,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
     // Jika judul kosong, set judul ke "Tidak ada judul"
     if (title.isEmpty) {
-      title = 'Unknown';
+      title = 'Untitled';
     }
 
     // newNote ini menyimpan judul, isi, kpn note dibuat, dan kpn trakhir diedit

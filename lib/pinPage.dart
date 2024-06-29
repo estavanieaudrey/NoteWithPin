@@ -3,8 +3,10 @@ import 'storage.dart';
 import 'homepage.dart';
 
 class PinPage extends StatefulWidget {
+  //var 
   final bool isChangingPin;
 
+  // parameter set false, ga require krn tdk diharuskan ngecall class dgn parameter
   PinPage({this.isChangingPin = false});
 
   @override
@@ -25,7 +27,7 @@ class _PinPageState extends State<PinPage> {
   @override
   void initState() {
     super.initState();
-    // memeriksa apakah ada pin yg disimpan 
+    // setiap page dipanggil memeriksa apakah ada pin yg disimpan 
     _checkStoredPin();
   }
 

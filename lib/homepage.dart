@@ -51,7 +51,7 @@ class HomePage extends StatelessWidget {
   void _changePin(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => PinPage(isChangingPin: true)),
+      MaterialPageRoute(builder: (_) => PinPage(isChangingPin: true)), //mengirimkan parameter
     );
   }
 
@@ -145,7 +145,7 @@ class HomePage extends StatelessWidget {
               // var key untuk mengidentifikasi ini note yang mana
               final key = notes[index].key;
               return Card(
-                color: Color.fromARGB(255, 176, 205, 255),
+                color: Color.fromARGB(255, 174, 201, 246),
                 elevation: 4,
                 margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
