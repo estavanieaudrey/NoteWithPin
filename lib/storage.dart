@@ -31,31 +31,19 @@ class PinStorage {
   static const _storage = FlutterSecureStorage();
   static const _pinKey = 'user_pin'; //kunci yang digunakan untuk menyimpan key
 
-  // // menyimpan pin ke pinkey
-  // static Future<void> setPin(String pin) async {
-  //   await _storage.write(key: _pinKey, value: pin);
-  // }
-
-  // // mengambil pin yang tersimpan di key
-  // static Future<String?> getPin() async {
-  //   return await _storage.read(key: _pinKey);
-  // }
-
-  // // mendelete pin yang tersimpan
-  // static Future<void> deletePin() async {
-  //   await _storage.delete(key: _pinKey);
-  // }
-
+  // mengambil pin yang tersimpan di key
   static Future<String?> getPin() async {
     var box = await Hive.openBox('pinBox');
     return box.get('pin');
   }
 
+  // menyimpan pin ke pinkey
   static Future<void> setPin(String pin) async {
     var box = await Hive.openBox('pinBox');
     await box.put('pin', pin);
   }
 
+  // mendelete pin yang tersimpan
   static Future<void> deletePin() async {
     var box = await Hive.openBox('pinBox');
     await box.delete('pin');

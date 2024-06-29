@@ -1,101 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'storage.dart';
-// import 'homepage.dart';
-
-// class PinPage extends StatefulWidget {
-//   @override
-//   _PinPageState createState() => _PinPageState();
-// }
-
-// class _PinPageState extends State<PinPage> {
-//   // controller untuk textfield input pin
-//   final TextEditingController _pinController = TextEditingController();
-//   // untuk cek apakah bikin baru? kl ngga brarti
-//   bool _isCreatingPin = false;
-
-//   // ini, storedpin : masukin pin yang sudah ada
-//   String? _storedPin;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _checkStoredPin();
-//   }
-
-//   // pengecekan apakah pin nya null?
-//   Future<void> _checkStoredPin() async {
-//     _storedPin = await PinStorage.getPin();
-//     setState(() {
-//       _isCreatingPin = _storedPin == null;
-//     });
-//   }
-
-//   // cek apakah pin bener?
-//   void _verifyPin() {
-//     // kalo bener, akan direct ke homepage
-//     if (_pinController.text == _storedPin) {
-//       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
-//     } else {
-//       // kalo salah, akan muncul text pin salah
-//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PIN salah!')));
-//     }
-//   }
-
-//   // menyimpan pin baru lalu direct ke homepage
-//   void _createPin() async {
-//     await PinStorage.setPin(_pinController.text);
-//     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       // tampilan nya
-//       backgroundColor: Colors.blueAccent,
-//       body: Center(
-//         child: Padding(
-//           padding: const EdgeInsets.all(16.0),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               // kl creating maka muncul buat pin, kl ga create maka masukkan pin
-//               Text(
-//                 _isCreatingPin ? 'Buat PIN' : 'Masukkan PIN',
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                   fontSize: 24,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               ),
-//               SizedBox(height: 20),
-//               TextField(
-//                 controller: _pinController,
-//                 decoration: InputDecoration(
-//                   filled: true,
-//                   fillColor: Colors.white,
-//                   border: OutlineInputBorder(
-//                     borderRadius: BorderRadius.circular(8),
-//                   ),
-//                   labelText: 'PIN',
-//                 ),
-//                 obscureText: true,
-//               ),
-//               SizedBox(height: 20),
-//               ElevatedButton(
-//                 onPressed: _isCreatingPin ? _createPin : _verifyPin,
-//                 child: Text(_isCreatingPin ? 'Buat PIN' : 'Masuk'),
-//                 style: ElevatedButton.styleFrom(
-//                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-//                   textStyle: TextStyle(fontSize: 18),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'storage.dart';
 import 'homepage.dart';
@@ -110,9 +12,12 @@ class PinPage extends StatefulWidget {
 }
 
 class _PinPageState extends State<PinPage> {
+  //inisialisasi controller 
   final TextEditingController _pinController = TextEditingController();
   final TextEditingController _newPinController = TextEditingController();
+  // ini, storedpin : masukin pin yang sudah ada
   String? _storedPin;
+  // inisialisasi biasa 
   bool _isCreatingPin = false;
   bool _isVerifyingOldPin = false;
   String _errorMessage = '';
@@ -120,61 +25,77 @@ class _PinPageState extends State<PinPage> {
   @override
   void initState() {
     super.initState();
+    // memeriksa apakah ada pin yg disimpan 
     _checkStoredPin();
   }
 
+  // pengecekan apakah pin nya null?
+  // ini dijalankan per line 
   Future<void> _checkStoredPin() async {
     _storedPin = await PinStorage.getPin();
     setState(() {
       // ini kl gada pin yg disimpan brarti buat baru
       if (_storedPin == null) {
         _isCreatingPin = true; 
+        // apabila sdh ada pin 
       } else if (widget.isChangingPin) {
-        _isVerifyingOldPin = true; // Changing existing PIN
+        _isVerifyingOldPin = true; 
       }
     });
   }
 
+  // apakah pin sdh bener?
   void _verifyPin() {
     setState(() {
       _errorMessage = '';
     });
 
+    // kalo pin kurang dari 4 digit
     if (_pinController.text.length < 4) {
       setState(() {
-        _errorMessage = 'PIN harus minimal 4 digit!';
+        // panggil error ini
+        _errorMessage = 'PIN must be at least 4 digits!';
       });
       return;
     }
+    // kl pin yg diinput bener
     if (_pinController.text == _storedPin) {
-      if (widget.isChangingPin) {
+      // kl ubah pin maka akan manggil 
+      if (widget.isChangingPin) { 
         setState(() {
-          _isVerifyingOldPin = false; // Proceed to create new PIN
+          _isVerifyingOldPin = false; 
+          // buat pin baru
           _isCreatingPin = true;
         });
+        // kl ga ubah pin maka masuk ke homepage
       } else {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
       }
+      // apabila pin yg dimasukkan salah 
     } else {
       setState(() {
-        _errorMessage = 'PIN salah!';
+        _errorMessage = 'Wrong PIN!';
       });
     }
   }
 
+  // ini untuk buat pin
   void _createPin() async {
     setState(() {
       _errorMessage = '';
     });
 
+    // new pin hrs minimal 4 digit
     if (_newPinController.text.length < 4) {
       setState(() {
-        _errorMessage = 'PIN baru harus minimal 4 digit!';
+        _errorMessage = 'New PIN must be at least 4 digits!';
       });
       return;
     }
 
+    // set pin 
     await PinStorage.setPin(_newPinController.text);
+    // masuk ke homepage
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
   }
 
@@ -188,12 +109,15 @@ class _PinPageState extends State<PinPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // ini texfield
               Text(
+                // kl creating pin brarti..
                 _isCreatingPin
-                    ? 'Buat PIN Baru'
+                    ? 'Create New PIN'
+                    // kl input pin lama
                     : _isVerifyingOldPin
-                        ? 'Masukkan PIN Lama'
-                        : 'Masukkan PIN',
+                        ? 'Enter Old PIN'
+                        : 'Input PIN',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -205,6 +129,8 @@ class _PinPageState extends State<PinPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextField(
+                    // klo creating pin makan new pin controller
+                    // klo gak maka panggil pin controller 
                     controller: _isCreatingPin ? _newPinController : _pinController,
                     decoration: InputDecoration(
                       filled: true,
@@ -212,11 +138,13 @@ class _PinPageState extends State<PinPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      labelText: _isCreatingPin ? 'PIN Baru' : 'PIN',
+                      // kl creat pin maka pin baru kl gak brarti cuma pin
+                      labelText: _isCreatingPin ? 'New PIN' : 'PIN',
                     ),
                     obscureText: true,
                   ),
                   SizedBox(height: 10),
+                  // kl ada error akan ada alert card
                   if (_errorMessage.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -229,8 +157,10 @@ class _PinPageState extends State<PinPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
+                // kl creat pin panggil  _createpin 
+                // kl gak berarti _verifypin
                 onPressed: _isCreatingPin ? _createPin : _verifyPin,
-                child: Text(_isCreatingPin ? 'Buat PIN' : 'Masuk'),
+                child: Text(_isCreatingPin ? 'Create PIN' : 'Enter'),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),

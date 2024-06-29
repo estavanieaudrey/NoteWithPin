@@ -32,6 +32,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   }
 
   void _saveNote() {
+    // ambil text di trim untuk hapus kl ada spasi diawal dan akhir
     String title = _titleController.text.trim();
     String content = _contentController.text.trim();
 
@@ -40,14 +41,15 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       showDialog(
       context: context,
       builder: (BuildContext context) {
+        // alerttt
         return AlertDialog(
           backgroundColor: Colors.red,
           title: Text(
-            'Maaf,',
+            'Sorry,',
             style: TextStyle(color: Colors.white),
           ),
           content: Text(
-            'Isi catatan tidak boleh kosong!',
+            'Notes cannot be Empty!',
             style: TextStyle(color: Colors.white),
           ),
           actions: [
@@ -69,7 +71,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
     // Jika judul kosong, set judul ke "Tidak ada judul"
     if (title.isEmpty) {
-      title = 'Tidak ada judul';
+      title = 'Unknown';
     }
 
     // newNote ini menyimpan judul, isi, kpn note dibuat, dan kpn trakhir diedit
@@ -104,7 +106,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
     return Scaffold(
       // apabila note nya kosong, maka tambah catatan, kl ada isi maka edit catatan
       appBar: AppBar(
-        title: Text(widget.note == null ? 'Tambah Catatan' : 'Edit Catatan'),
+        title: Text(widget.note == null ? 'Add Note' : 'Edit Note'),
         actions: [
           // kalo note nya tidak kosong berarti bisa dihapus, maka dikasi icon delete
           if (widget.note != null)
@@ -123,7 +125,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
             TextField(
               controller: _titleController, //kontroler nya ya title
               decoration: InputDecoration(
-                labelText: 'Judul',
+                labelText: 'Title',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -132,7 +134,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
             TextField(
               controller: _contentController, //ini konten krn isi
               decoration: InputDecoration(
-                labelText: 'Isi',
+                labelText: 'Contents',
                 border: OutlineInputBorder(),
               ),
               maxLines: null,
