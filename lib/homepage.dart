@@ -221,7 +221,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Catatan'),
+        title: Text('Notes'),
         actions: [
           PopupMenuButton<String>(
             onSelected: (String value) {
