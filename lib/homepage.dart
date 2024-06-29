@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
       builder: (BuildContext context) {
         // return nya dibuat alert
         return AlertDialog(
-          backgroundColor: Colors.red[],
+          backgroundColor: Colors.red[300],
           title: Text('Change PIN'),
           content: Text('Do you want to change your PIN?'),
           actions: [
