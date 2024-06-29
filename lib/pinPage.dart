@@ -131,7 +131,7 @@ class _PinPageState extends State<PinPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextField(
-                    // klo creating pin makan new pin controller
+                    // klo creating pin maka new pin controller
                     // klo gak maka panggil pin controller 
                     controller: _isCreatingPin ? _newPinController : _pinController,
                     decoration: InputDecoration(
