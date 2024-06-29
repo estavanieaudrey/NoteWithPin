@@ -115,6 +115,7 @@ class _PinPageState extends State<PinPage> {
   String? _storedPin;
   bool _isCreatingPin = false;
   bool _isVerifyingOldPin = false;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -125,8 +126,9 @@ class _PinPageState extends State<PinPage> {
   Future<void> _checkStoredPin() async {
     _storedPin = await PinStorage.getPin();
     setState(() {
+      // ini kl gada pin yg disimpan brarti buat baru
       if (_storedPin == null) {
-        _isCreatingPin = true; // First run, create a new PIN
+        _isCreatingPin = true; 
       } else if (widget.isChangingPin) {
         _isVerifyingOldPin = true; // Changing existing PIN
       }
@@ -134,6 +136,16 @@ class _PinPageState extends State<PinPage> {
   }
 
   void _verifyPin() {
+    setState(() {
+      _errorMessage = '';
+    });
+
+    if (_pinController.text.length < 4) {
+      setState(() {
+        _errorMessage = 'PIN harus minimal 4 digit!';
+      });
+      return;
+    }
     if (_pinController.text == _storedPin) {
       if (widget.isChangingPin) {
         setState(() {
@@ -144,11 +156,24 @@ class _PinPageState extends State<PinPage> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PIN salah!')));
+      setState(() {
+        _errorMessage = 'PIN salah!';
+      });
     }
   }
 
   void _createPin() async {
+    setState(() {
+      _errorMessage = '';
+    });
+
+    if (_newPinController.text.length < 4) {
+      setState(() {
+        _errorMessage = 'PIN baru harus minimal 4 digit!';
+      });
+      return;
+    }
+
     await PinStorage.setPin(_newPinController.text);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
   }
@@ -176,17 +201,31 @@ class _PinPageState extends State<PinPage> {
                 ),
               ),
               SizedBox(height: 20),
-              TextField(
-                controller: _isCreatingPin ? _newPinController : _pinController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _isCreatingPin ? _newPinController : _pinController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      labelText: _isCreatingPin ? 'PIN Baru' : 'PIN',
+                    ),
+                    obscureText: true,
                   ),
-                  labelText: _isCreatingPin ? 'PIN Baru' : 'PIN',
-                ),
-                obscureText: true,
+                  SizedBox(height: 10),
+                  if (_errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        _errorMessage,
+                        style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
+                      ),
+                    ),
+                ],
               ),
               SizedBox(height: 20),
               ElevatedButton(
