@@ -32,10 +32,50 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   }
 
   void _saveNote() {
+    String title = _titleController.text.trim();
+    String content = _contentController.text.trim();
+
+    // Cek jika konten kosong, tampilkan dialog error dan kembali
+    if (title.isEmpty && content.isEmpty) {
+      showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.red,
+          title: Text(
+            'Maaf,',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Text(
+            'Isi catatan tidak boleh kosong!',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            TextButton(
+              child: Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+      return;
+    }
+
+    // Jika judul kosong, set judul ke "Tidak ada judul"
+    if (title.isEmpty) {
+      title = 'Tidak ada judul';
+    }
+
     // newNote ini menyimpan judul, isi, kpn note dibuat, dan kpn trakhir diedit
     final newNote = Note(
-      title: _titleController.text,
-      content: _contentController.text,
+      title: title,
+      content: content,
       createdDate: widget.note?.createdDate ?? DateTime.now(),
       lastEditedDate: DateTime.now(),
     );
