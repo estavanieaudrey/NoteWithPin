@@ -5,8 +5,11 @@ import 'pinPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // inisialisasi hive
   await Hive.initFlutter();
+  // register note
   Hive.registerAdapter(NoteAdapter());
+  // penyimpanan hive namanya notes, simpen Note ke box
   await Hive.openBox<Note>('notes');
 
   // await PinStorage.deletePin();
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: PinPage(),
+      home: PinPage(), //njalanin pinpage
     );
   }
 }
